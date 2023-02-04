@@ -1,0 +1,131 @@
+.App {
+  display: flex;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 25px;
+  flex-direction: column;
+  grid-template-columns: max-content;
+  position: relative;
+}
+body {
+  background-image: url("./assets/pokemonbg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background-attachment: fixed;
+}
+.header {
+  background-color: #6db9ff;
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+input {
+  width: 300px;
+  height: 30px;
+  border: 1px solid #4299eb;
+  border-radius: 10px;
+  font-size: 18px;
+  padding-left: 10px;
+  margin: 35px;
+}
+.display {
+  align-items: center;
+}
+.display h1 {
+  text-align: center;
+}
+.display h3,
+h4 {
+  margin: 5px;
+}
+.display img {
+  width: 100%;
+  height: auto;
+}
+.content {
+  display: flex;
+}
+.left {
+  width: 80%;
+  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 30%;
+  height: 500px;
+  border: 2px solid;
+  font-size: 20px;
+  width: 550px;
+  height: 700;
+  color: slategray;
+  background-color: aliceblue;
+  border-radius: 5%;
+  padding: 5px;
+  margin: 5px;
+}
+.right-content {
+  position: absolute;
+  right: 0;
+  top: 260px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 25px;
+  position: fixed;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.nameContainer button {
+  width: 300px;
+  height: auto;
+  font-size: 20px;
+  border: 1px solid #054581;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+}
+.nameContainer button:hover {
+  background-color: rgb(208, 208, 208);
+  cursor: pointer;
+}
+.nameContainer img {
+  margin-right: 40px;
+}
+.nameContainer p {
+  justify-content: center;
+  text-align: center;
+  margin-top: 35px;
+}
+.Title-SearchBar {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 0;
+  margin-bottom: 30px;
+  color: white;
+}
+.btn-group {
+  border: 1px solid #4299eb;
+  border-radius: 10px;
+  font-size: 18px;
+  padding-left: 10px;
+  margin: 35px;
+  width: 150px;
+  height: 50px;
+  color: slategray;
+}
+.btn-group:hover {
+  background-color: rgb(208, 208, 208);
+  cursor: pointer;
+}
