@@ -1,37 +1,54 @@
-import "./App.css";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+// App.js
+import './App.css';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import PokemonModal from './PokemonModal';
+import { motion } from 'framer-motion'; // Import motion from Framer Motion
+import './PokemonModal.css';
+
 function App() {
+  const itemsPerPage = 10;
   const [nameList, setNameList] = useState([]);
   const [pokemonChosen, setPokemonChosen] = useState(false);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [pokemon, setPokemon] = useState({
-    name: "",
-    species: "",
-    img: "",
-    hp: "",
-    attack: "",
-    defense: "",
-    type: "",
+    name: '',
+    species: '',
+    img: '',
+    hp: '',
+    attack: '',
+    defense: '',
+    type: '',
   });
+  const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     axios
-      .get("https://pokeapi.co/api/v2/pokemon/?limit=500")
+      .get('https://pokeapi.co/api/v2/pokemon/?limit=500')
       .then((response) => {
         const updatedNameList = response.data.results.map((item) => {
           return {
             name: item.name,
             url: item.url,
             img: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
-              item.url.split("/")[6]
+              item.url.split('/')[6]
             }.png`,
           };
         });
         setNameList(updatedNameList);
       });
   }, []);
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   const searchPokemon = (item) => {
     axios
       .get(`https://pokeapi.co/api/v2/pokemon/${item.name}`)
@@ -47,108 +64,87 @@ function App() {
         });
         setPokemonChosen(true);
         setSelectedIndex(nameList.indexOf(item));
+        setShowModal(true);
       })
       .catch((error) => {
         console.error(error);
       });
   };
-  const handleNext = () => {
-    if (selectedIndex < nameList.length - 1) {
-      searchPokemon(nameList[selectedIndex + 1]);
-    }
-  };
-  const handlePrevious = () => {
-    if (selectedIndex > 0) {
-      searchPokemon(nameList[selectedIndex - 1]);
-    }
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
   };
 
-  // function handleClick() {
-  //   window.location.href = "./App.js";
-  // }
+  const filteredNameList = nameList.filter((item) => {
+    if (search === '') {
+      return true;
+    } else {
+      return item.name.toLowerCase().includes(search.toLowerCase());
+    }
+  });
+
+  const totalItems = filteredNameList.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const currentNameList = filteredNameList.slice(startIndex, endIndex);
+
   return (
     <div className="App">
       <div className="Title-SearchBar">
-        <h1>Pokemon Stats</h1>
+        <h1 className="header">Pokemon Stats</h1>
         <input
+          className="search-bar"
           type="text"
           placeholder="Search your pokemon"
           onChange={(event) => {
             setSearch(event.target.value);
+            setCurrentPage(1);
           }}
         />
       </div>
       <div className="content">
         <div className="left">
-          {nameList
-            .filter((item) => {
-              if (search === "") {
-                return item;
-              } else if (
-                item.name.toLowerCase().includes(search.toLowerCase())
-              ) {
-                return item;
-              }
-            })
-            .map((item) => {
-              return (
-                <div
-                  className="nameContainer"
-                  key={item.name}>
-                  <button onClick={() => searchPokemon(item)}>
-                    <img
-                      src={item.img}
-                      alt=""
-                    />
-                    <p>
-                      {item.name.charAt(0).toUpperCase() +
-                        item.name.slice(1).toLowerCase()}
-                    </p>
-                  </button>
-                </div>
-              );
-            })}
+          {currentNameList.map((item) => (
+            <div
+              className="nameContainer"
+              key={item.name}>
+              <button onClick={() => searchPokemon(item)}>
+                <img
+                  src={item.img}
+                  alt=""
+                />
+                <p>{item.name}</p>
+              </button>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="right-content">
-        <div className="right">
-          {" "}
-          {pokemonChosen ? (
-            <>
-              <h1>
-                {pokemon.name.charAt(0).toUpperCase() +
-                  pokemon.name.slice(1).toLowerCase()}
-              </h1>
-              <img
-                src={pokemon.img}
-                alt=""
-              />
-              <h3>
-                Species:{" "}
-                {pokemon.species.charAt(0).toUpperCase() +
-                  pokemon.species.slice(1).toLowerCase()}
-              </h3>
-              <h3>Type: {pokemon.type}</h3>
-              <h4>Hp: {pokemon.hp}</h4>
-              <h4>Attack: {pokemon.attack}</h4>
-              <h4>Defense: {pokemon.defense}</h4>
-            </>
-          ) : (
-            <></>
-          )}
-          <div className="button-next">
-            <button
-              onClick={() => handlePrevious()}
-              className="btn-group">
-              Previous
-            </button>
-            <button
-              onClick={() => handleNext()}
-              className="btn-group">
-              Next
-            </button>
-          </div>
-        </div>
+      {showModal && (
+        <motion.div
+          initial={{ opacity: 0, y: '-100vh' }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: '-100vh' }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}>
+          <PokemonModal
+            pokemon={pokemon}
+            onClose={handleCloseModal}
+          />
+        </motion.div>
+      )}
+      <div className="pagination">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}>
+          Previous
+        </button>
+        <span>{`Page ${currentPage} of ${totalPages}`}</span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}>
+          Next
+        </button>
       </div>
     </div>
   );
